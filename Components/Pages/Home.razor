@@ -1,0 +1,59 @@
+﻿@page "/"
+@using DevOpsApp.Models;
+@using DevOpsApp.Interfaces
+@inject IStudentService StudentService;
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<h1>Add Student</h1>
+
+<div class="form-group">
+    <label>Name</label>
+    <input @bind="name" class="form-control" placeholder="Name" required="true">
+</div>
+<div class="mt-2 form-group">
+    <label>ERP</label>
+    <input @bind="erp" class="form-control" placeholder="ERP" required="true">
+</div>
+<div class="form-group">
+    <label>Course</label>
+    <input @bind="course" class="form-control" placeholder="Course" required="true">
+</div>
+<div class="form-group">
+    <label hidden="@SuccessLabel" class="success_color">Record updated!</label>
+    <label hidden="@ErrorLabel" class="error_color">Error</label>
+</div>
+
+<button @onclick="AddUpdateStudentDetails" type="submit" class="btn btn-primary">Submit</button>
+
+@code {
+    private string name;
+    private string erp;
+    private string course;
+    private bool SuccessLabel { get; set; } = true;
+    private bool ErrorLabel { get; set; } = true;
+
+    private async Task AddUpdateStudentDetails()
+    {
+        var student = new Student()
+        {
+            Name = name,
+            ERP = erp,
+            Course = course
+        };
+
+        var response = await StudentService.PostStudentRecord(student);
+        if (response)
+        {
+            SuccessLabel = false;
+            ErrorLabel = true;
+        }
+        else
+        {
+            ErrorLabel = false;
+            SuccessLabel = true;
+        }
+    }
+}
+<script src="~/_framework/blazor.server.js"></script>
